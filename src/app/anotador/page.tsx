@@ -6,6 +6,30 @@ import Swal from "sweetalert2";
 
 import {Button} from "@/components/ui/button";
 
+type GrupoFosforosProps = {
+  cantidad: number;
+};
+
+function GrupoFosforos({cantidad}: GrupoFosforosProps) {
+  return (
+    <div className="group">
+      {Array.from({length: cantidad}).map((_, i) => (
+        <img key={i} alt="Fósforo" className={`fosforo${i + 1}`} src="/fosforo.png" />
+      ))}
+    </div>
+  );
+}
+
+function renderFosforos(counter: number) {
+  const grupos = [];
+
+  for (let i = 0; i < counter; i += 5) {
+    grupos.push(<GrupoFosforos key={i} cantidad={Math.min(5, counter - i)} />);
+  }
+
+  return grupos;
+}
+
 export default function HomePage() {
   const router = useRouter();
 
@@ -63,7 +87,7 @@ export default function HomePage() {
   function addition(decider: number) {
     if (decider == 1 && counter1 < limite) {
       setCounter1((c) => c + 1);
-      showFosforos(decider, counter1 + 1);
+
       if (counter1 == limite - 1) {
         showWinner(decider);
       }
@@ -71,7 +95,7 @@ export default function HomePage() {
 
     if (decider == 2 && counter2 < limite) {
       setCounter2((c) => c + 1);
-      showFosforos(decider, counter2 + 1);
+
       if (counter2 == limite - 1) {
         showWinner(decider);
       }
@@ -81,20 +105,16 @@ export default function HomePage() {
   function subtraction(decider: number) {
     if (decider == 1 && counter1 > 0) {
       setCounter1((c) => c - 1);
-      showFosforos(decider, counter1 - 1);
     }
 
     if (decider == 2 && counter2 > 0) {
       setCounter2((c) => c - 1);
-      showFosforos(decider, counter2 - 1);
     }
   }
 
   function restart() {
     setCounter1(0);
-    showFosforos(1, 0);
     setCounter2(0);
-    showFosforos(2, 0);
   }
 
   function showWinner(decider: number) {
@@ -114,99 +134,52 @@ export default function HomePage() {
     }
   }
 
-  function showFosforos(decider: number, counter: number) {
-    const container1 = document.getElementById("imageContainer1");
-    const container2 = document.getElementById("imageContainer2");
-
-    if (decider == 1) {
-      const gruposNow1 = container1?.querySelectorAll(".group");
-
-      gruposNow1?.forEach((g) => container1?.removeChild(g));
-
-      let group;
-
-      for (let i = 0; i < counter; i++) {
-        if (i % 5 === 0) {
-          group = document.createElement("div");
-          group.classList.add("group");
-          container1?.appendChild(group);
-        }
-        const newFosforo = document.createElement("img");
-
-        newFosforo.src = "/fosforo.png";
-        newFosforo.classList.add("fosforo" + ((i % 5) + 1));
-        group?.appendChild(newFosforo);
-      }
-    } else if (decider == 2) {
-      const gruposNow2 = container2?.querySelectorAll(".group");
-
-      gruposNow2?.forEach((g) => container2?.removeChild(g));
-
-      let group;
-
-      for (let i = 0; i < counter; i++) {
-        if (i % 5 === 0) {
-          group = document.createElement("div");
-          group.classList.add("group");
-          container2?.appendChild(group);
-        }
-        const newFosforo = document.createElement("img");
-
-        newFosforo.src = "/fosforo.png";
-        newFosforo.classList.add("fosforo" + ((i % 5) + 1));
-        group?.appendChild(newFosforo);
-      }
-    }
-  }
-
   return (
     <main className="flex justify-center">
       <section className="flex flex-col items-center justify-center bg-[url(/texturaPapelMarron.png)] bg-cover">
-        <div className="flex h-[780px] justify-center space-x-10">
-          <section className="space-y-5 p-5">
+        <div className="grid h-screen grid-cols-[1fr_2px_1fr]">
+          <section className="w-full max-w-md space-y-5 p-5">
             <div className="text-center font-serif text-2xl font-semibold italic text-slate-900">
-              <p>
-                {equipo1}: {counter1}
-              </p>
+              <p>{equipo1}:</p>
+              <p>{counter1}</p>
             </div>
-            <div className="space-x-5">
+            <div className="flex flex-wrap justify-center gap-3">
               <Button
-                className="bg-[#cfa005] font-serif font-bold italic hover:bg-[#b48b03]"
+                className="h-12 w-12 bg-[#cfa005] text-3xl font-bold hover:bg-[#b48b03]"
                 onClick={() => addition(1)}
               >
-                Sumar puntos
+                +
               </Button>
               <Button
-                className="bg-[#cfa005] font-serif font-bold italic hover:bg-[#b48b03]"
+                className="h-12 w-12 bg-[#cfa005] text-3xl font-bold hover:bg-[#b48b03]"
                 onClick={() => subtraction(1)}
               >
-                Restar puntos
+                -
               </Button>
             </div>
-            <div id="imageContainer1" />
+            <div className="flex flex-col items-center">{renderFosforos(counter1)}</div>
           </section>
-          <div className="w-1 justify-center rounded bg-black md:h-[630px] md:translate-y-[130px]" />
-          <section className="space-y-5 p-5">
+          <div className="w-[3px] self-stretch bg-black" />
+          <section className="w-full max-w-md space-y-5 p-5">
             <div className="text-center font-serif text-2xl font-semibold italic text-slate-900">
-              <p>
-                {equipo2}: {counter2}
-              </p>
+              <p>{equipo2}:</p>
+              <p>{counter2}</p>
             </div>
-            <div className="space-x-5">
+            <div className="flex flex-wrap justify-center gap-3">
               <Button
-                className="bg-[#cfa005] font-serif font-bold italic hover:bg-[#b48b03]"
+                className="h-12 w-12 bg-[#cfa005] text-3xl font-bold hover:bg-[#b48b03]"
                 onClick={() => addition(2)}
               >
-                Sumar puntos
+                +
               </Button>
               <Button
-                className="bg-[#cfa005] font-serif font-bold italic hover:bg-[#b48b03]"
+                className="h-12 w-12 bg-[#cfa005] text-3xl font-bold hover:bg-[#b48b03]"
                 onClick={() => subtraction(2)}
               >
-                Restar puntos
+                -
               </Button>
             </div>
-            <div id="imageContainer2" />
+            <div className="flex flex-col items-center">{renderFosforos(counter2)}</div>
           </section>
         </div>
         <div className="m-4">
